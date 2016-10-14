@@ -5,8 +5,7 @@ import akka.actor.UntypedActor;
  */
 public class SectionAgent extends UntypedActor{
 
-    //bruh
-    // TODO: 14-10-2016 bruh 
+    // hi elvis
 
     @Override
     public void onReceive(Object o) throws Throwable {
