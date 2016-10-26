@@ -8,7 +8,7 @@ public class SectionAgent extends UntypedActor{
     // hi elvis
 
     @Override
-    public void onReceive(Object o) throws Throwable {
+    public void onReceive(Object message) throws Throwable {
 
     }
 }
