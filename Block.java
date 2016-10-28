@@ -18,7 +18,7 @@ public class Block {
         this.block = block;
         this.amount = amount;
         for (int i = 0; i < 1000; i++) {
-            seats.add(new Seat());
+            //seats.add(new Seat());
         }
     }
 }

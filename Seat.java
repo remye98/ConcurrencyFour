@@ -14,7 +14,11 @@ public class Seat {
     private final int row;
     private final int price;
 
+    private boolean taken;
+    private boolean reserved;
+
     private ActorRef actorRef;
+    private ActorRef sectionAgent;
 
     public Seat(int seatNr, int block, int row, int price) {
         this.seatNr = seatNr;
