@@ -31,4 +31,8 @@ public class TicketResponse {
     public List<Seat> getSeats() {
         return seats;
     }
+
+    public ActorRef getActor () {
+        return to;
+    }
 }

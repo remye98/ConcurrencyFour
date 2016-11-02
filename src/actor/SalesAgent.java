@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import concert.Concert;
 import message.TicketRequest;
+import message.TicketResponse;
 import ticketagency.TicketAgency;
 
 /**
@@ -26,7 +27,12 @@ public class SalesAgent extends UntypedActor {
             TicketRequest request = (TicketRequest) o;
             Concert.SectionType sectionType = request.getSectionType();
             ActorRef sectionAgent = ticketAgency.getSectionAgent(sectionType);
-            sectionAgent.tell(request, getSender());
+            sectionAgent.tell(request, getSelf());
+        } else if (o instanceof TicketResponse) {
+            TicketResponse ticketResponse = (TicketResponse) o;
+            ActorRef fan = ticketResponse.getActor();
+
+            fan.tell(ticketResponse, getSelf());
         }
     }
 }

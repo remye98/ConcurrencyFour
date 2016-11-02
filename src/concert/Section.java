@@ -1,9 +1,9 @@
 package concert;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by e_voe_000 on 10/30/2016.
@@ -28,11 +28,20 @@ public abstract class Section {
             generateSeats();
         }
 
+        public Map getSeats() {
+            return map;
+        }
+
         private void generateSeats() {
             for (int row = 0; row < rows; row++) {
                 List<Seat> seats = new ArrayList<>();
                 for (int seatNumber = 0; seatNumber < this.seats; seatNumber++) {
                     Seat seat = new Seat(row, seatNumber);
+
+                    if (seats.size() > 0) {
+                        Seat previousSeat = seats.get(seatNumber - 1);
+                        previousSeat.setNext(seat);
+                    }
                     seats.add(seat);
                 }
                 map.put(row, seats);

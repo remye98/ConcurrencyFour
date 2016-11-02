@@ -29,6 +29,12 @@ public class TicketAgency {
     private ArrayList<ActorRef> salesAgents = new ArrayList<>();
     private final HashMap<Concert.SectionType, ActorRef> sectionAgents = new HashMap<>();
 
+    /**
+     * Constructor
+     *
+     * @param actorSystem
+     * @param concert
+     */
     public TicketAgency(ActorSystem actorSystem, Concert concert) {
         this.actorSystem = actorSystem;
         this.concert = concert;

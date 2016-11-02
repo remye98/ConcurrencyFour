@@ -40,27 +40,29 @@ public class SectionAgent extends UntypedActor {
 
             ActorRef from = request.getFrom();
 
+            TicketResponse ticketResponse;
+            List<Seat> seats = new ArrayList<>();
             if (concert.getSection(sectionType) instanceof Section.SeatingSection) {
                 Section.SeatingSection section = (Section.SeatingSection) concert.getSection(sectionType);
                 List<Seat> availableSeats = section.getAvailableSeats();
 
-                List<Seat> seats = new ArrayList<>();
-                if (amount > 1) {
-                    seats.addAll(groupSeats(availableSeats, amount));
-                    for (Seat seat : seats) {
+                if (availableSeats.size() > 0) {
+                    if (amount > 1) {
+                        seats.addAll(groupSeats(availableSeats, amount));
+                        for (Seat seat : seats) {
+                            seat.setReserved(true);
+                        }
+                    } else {
+                        Seat seat = availableSeats.get(0);
                         seat.setReserved(true);
+                        seats.add(seat);
                     }
+                    ticketResponse = new TicketResponse(seats, from);
                 } else {
-                    Seat seat = availableSeats.get(0);
-                    seat.setReserved(true);
-                    seats.add(seat);
+                    ticketResponse = new TicketResponse(seats, from);
                 }
 
-                TicketResponse ticketResponse = new TicketResponse(seats, from);
                 System.out.println(from.toString() + " reserved " + amount + " for " + sectionType);
-                for (Seat seat : ticketResponse.getSeats()) {
-                    System.out.print(seat.toString() + " ");
-                }
                 getSender().tell(ticketResponse, getSelf());
             } else {
                 System.out.println();
@@ -75,22 +77,29 @@ public class SectionAgent extends UntypedActor {
         int row = 0;
         int seatNr = 0;
 
-        for (int i = 0; i < availableSeats.size(); i++) {
-            row = availableSeats.get(i).getRow();
-            seatNr = availableSeats.get(i).getSeatNumber();
-            for (int j = i + 1; j < amount; j++) {
-                if (row == availableSeats.get(j).getRow()) {
-                    if ((seatNr - availableSeats.get(j).getSeatNumber()) == -1) {
-                        consecutiveSeats.add(availableSeats.get(j));
+        for (Seat availableSeat : availableSeats) {
+            for (int i = 0; i < amount; i++) {
+                if (consecutiveSeats.size() == 0) {
+                    consecutiveSeats.add(availableSeat);
+                } else {
+                    Seat previousSeat = consecutiveSeats.get(consecutiveSeats.size() - 1);
+                    Seat nextSeat = previousSeat.getNext();
+                    boolean taken = nextSeat.isTaken();
+                    boolean reserved = nextSeat.isReserved();
+
+                    if (!taken || !reserved) {
+                        consecutiveSeats.add(nextSeat);
                     } else {
                         consecutiveSeats.clear();
-                        break;
                     }
-                } else {
-                    break;
                 }
             }
+
+            if (consecutiveSeats.size() == amount) {
+                break;
+            }
         }
+
         return consecutiveSeats;
     }
 }

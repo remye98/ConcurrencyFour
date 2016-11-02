@@ -55,7 +55,7 @@ public class Fan extends UntypedActor {
             TicketResponse ticketResponse = (TicketResponse) o;
 
             if (ticketResponse.getSeats().size() > 0) {
-                System.out.println("Ma haya tickets");
+                System.out.println("Got ticket");
             } else {
                 System.out.println("Rejected");
             }
