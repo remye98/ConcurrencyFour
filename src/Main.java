@@ -1,18 +1,20 @@
+import actor.Fan;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import akka.stream.impl.fusing.Map;
-import initMessage.SalesAgentReference;
-import initMessage.SectionAgentReference;
+import concert.Concert;
+import ticketagency.TicketAgency;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Remy on 26-10-2016.
  */
 public class Main {
+
+    private ActorSystem actorSystem;
+    private Concert concert;
+    private TicketAgency ticketAgency;
 
     public static void main(String[] args) {
         new Main().run();
@@ -22,40 +24,20 @@ public class Main {
     // Properties
     /////////////////////////////////////////////////C:\Users\Remy\Desktop\Project Persistent\app\build\outputs\apk//////////////////////////
 
-    private ArrayList<String> section = new ArrayList<>();
-    private ActorRef standingPit, salesagent, fan;
+    private ArrayList<ActorRef> fans = new ArrayList<>();
 
     private void run() {
-        ActorSystem actorSystem = ActorSystem.create("SectionAgent");
-        standingPit = actorSystem.actorOf(Props.create(SectionAgent.class), "STANDINGPIT");
-        salesagent = actorSystem.actorOf(Props.create(SalesAgent.class), "SA1");
-        fan = actorSystem.actorOf(Props.create(Fan.class), "FAN");
+        actorSystem = ActorSystem.create("Concert");
+        concert = new Concert();
+        ticketAgency = new TicketAgency(actorSystem, concert);
 
-        HashMap<String , ActorRef> sectionRef = new HashMap<>();
-        sectionRef.put("standingPit",standingPit);
-        salesagent.tell(new SectionAgentReference(sectionRef), null);
-        fan.tell(new SalesAgentReference(salesagent), null);
+        generateFans();
+    }
 
-//        ActorRef fan = actorSystem.actorOf(Props.create(Fan.class), "fanCreator");
-//        ActorRef fanPerson = actorSystem.actorOf(Props.create(new FanCreator(fan)), "fan");
-
-//        ActorRef fan1 = actorSystem.actorOf(Props.create(Fan.class), "fan1");
-//        fan1.tell("Hello", null);
-
-        for (int i = 0; i < 1000; i++) {
-           // ActorRef fan = actorSystem.actorOf(Props.create(Fan.class, i), "fan" + i);
-            // fans.add(fan);
+    private void generateFans() {
+        for (int id = 0; id < 10; id++) {
+            ActorRef actorRef = actorSystem.actorOf(Props.create(Fan.class, concert, ticketAgency, id), "fan_" + id);
+            fans.add(actorRef);
         }
-
-//        tellAllFans("wefjwe");
     }
 }
-
-//    private void tellAllFans(String message) {
-//        for (ActorRef fan : fans) {
-//            fan.tell(message, null);
-//        }
-//
-//    }
-//
-//}
